@@ -1,0 +1,12 @@
+a. login to mysql client as root, password for root should be 'root', run this command and
+    type in the password when prompted:
+    mysql -u root -p
+b. create database , in mysql client(in terminal type "mysql"), run this command:
+    create database location;
+c. create user to access the new database, this user is from settings.py in this project
+    in mysql client, create the user along with password, user and password should match settings.py
+    i.e.:
+    grant all privileges on location.* to 'oneseek'@'localhost' identified by "jobpost8531162";
+d. when creating database for this project, use character set UTF8 to support Chinese characters:
+    i.e., if the database job_post already exists, to set it to use UTF8 character set, run this command in mysql client:
+    ALTER DATABASE location CHARACTER SET utf8 COLLATE utf8_general_ci;

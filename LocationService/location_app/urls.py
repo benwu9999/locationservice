@@ -19,13 +19,7 @@ from . import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-
     url(r'^location/$', views.LocationList.as_view()),
 	url(r'^location/(?P<commuteId>.+)$', views.LocationDetail.as_view()),
 	url(r'^location?ids=',views.LocationById.as_view()),
-
-    url(r'^commute/bulkSave/', views.CommuteInfoBulkSave.as_view()),
-    url(r'^commute/bulkGet/', views.CommuteInfoBulkGet.as_view()),
-    url(r'^commute/$', views.CommuteInfoList.as_view()),
-	url(r'^commute/(?P<commuteId>.+)$', views.CommuteInfoDetail.as_view()),
 ]
