@@ -1,5 +1,6 @@
 import json
 
+import sys
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -20,7 +21,17 @@ class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LocationSerializer
 
 
-class LocationById(APIView):
+class LocationSearch(APIView):
     def get(self, request, format=None):
-        locations = Location.objects.filter(location_id__in=request.data['ids'].split(','))
-        return Response(locations)
+        try:
+            data = {}
+            if 'ids' in request.query_params:
+                # data['locations'] = LocationSerializer(Location.objects.filter(
+                #     pk__in=request.query_params['ids'].split(',')), many=True)
+
+                serializer = LocationSerializer(Location.objects.filter(
+                    pk__in=request.query_params['ids'].split(',')), many=True)
+
+                return Response(serializer.data)
+        except:
+            return Response(sys.exc_info()[0])
