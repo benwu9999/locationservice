@@ -24,11 +24,7 @@ class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
 class LocationSearch(APIView):
     def get(self, request, format=None):
         try:
-            data = {}
             if 'ids' in request.query_params:
-                # data['locations'] = LocationSerializer(Location.objects.filter(
-                #     pk__in=request.query_params['ids'].split(',')), many=True)
-
                 serializer = LocationSerializer(Location.objects.filter(
                     pk__in=request.query_params['ids'].split(',')), many=True)
 
