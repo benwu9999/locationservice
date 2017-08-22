@@ -16,10 +16,8 @@ class LocationList(generics.ListCreateAPIView):
 
 class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
     # override the default lookup field "PK" with the lookup field for this model
-    lookup_field = 'location_id'
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
-
 
 class LocationSearch(APIView):
     def get(self, request, format=None):
