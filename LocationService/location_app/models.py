@@ -4,6 +4,9 @@ import uuid
 
 
 # Create your models here.
+from django_unixdatetimefield import UnixDateTimeField
+
+
 class Location(models.Model):
     class Meta:
         db_table = 'location'
@@ -16,3 +19,5 @@ class Location(models.Model):
     street_address = models.CharField(max_length=200)
     city = models.CharField(max_length=200)
     zip_code = models.IntegerField()
+    created = UnixDateTimeField(null=True, blank=True)
+    modified = UnixDateTimeField(auto_now=True)
