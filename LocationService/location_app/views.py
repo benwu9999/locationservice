@@ -2,10 +2,11 @@ import time
 import sys
 
 import operator
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.db.models import Q
+from datetime import datetime
 
 from serializers import *
 
@@ -14,6 +15,18 @@ from serializers import *
 class LocationList(generics.ListCreateAPIView):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
+
+    def post(self, request, *args, **kwargs):
+
+        location_dict = request.data
+        if 'location_id' not in location_dict:
+            location_dict['created'] = datetime.utcnow()
+            okStatus = status.HTTP_201_CREATED
+        else:
+            okStatus = status.HTTP_200_OK
+        location = Location(**location_dict)
+        location.save()
+        return Response(LocationSerializer(location).data, status=okStatus)
 
 
 class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
