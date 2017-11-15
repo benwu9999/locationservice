@@ -6,11 +6,12 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     # need the '/' before $ to properly route call to generics.ListCreateAPIView
-    url(r'^commute', views.CommuteInfoList.as_view()),
+    url(r'^commute$', views.CommuteInfoList.as_view()),
 
     # supports /jobPost/{jobPostId}
-    url(r'^commute/(?P<commuteInfoId>.+)$', views.CommuteInfoDetail.as_view()),
     url(r'^commute/bulkSave$', views.CommuteInfoBulkSave.as_view()),
+    url(r'^commute/bulkGet$', views.CommuteInfoBulkGet.as_view()),
+    url(r'^commute/(?P<commuteInfoId>.+)$', views.CommuteInfoDetail.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

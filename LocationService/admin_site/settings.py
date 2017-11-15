@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',  # for allowing CORS
-    'location_app.apps.LocationAppConfig',
     'commute_app.apps.CommuteAppConfig',
+    'location_app.apps.LocationAppConfig',
 ]
 
 MIDDLEWARE = [

@@ -20,6 +20,12 @@ from . import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^location$', views.LocationList.as_view()),
+
+    # unprotected views
+    url(r'^location/ids', views.LocationSearchByIds.as_view()),
+
     url(r'^location/search', views.LocationSearch.as_view()),
     url(r'^location/(?P<pk>.+)$', views.LocationDetail.as_view()),
+
+
 ]

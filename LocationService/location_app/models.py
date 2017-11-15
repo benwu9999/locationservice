@@ -1,9 +1,11 @@
 from __future__ import unicode_literals
-from django.db import models
-import uuid
-
 
 # Create your models here.
+import datetime
+import uuid
+
+import dateutil.parser
+from django.db import models
 from django_unixdatetimefield import UnixDateTimeField
 
 
@@ -19,5 +21,12 @@ class Location(models.Model):
     street_address = models.CharField(max_length=200)
     city = models.CharField(max_length=200)
     zip_code = models.IntegerField()
-    created = UnixDateTimeField(null=True, blank=True)
+    created = UnixDateTimeField()
     modified = UnixDateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not self.created:
+            self.created = datetime.datetime.now()
+        else:
+            self.created = dateutil.parser.parse(self.created)
+        super(Location, self).save()

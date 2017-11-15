@@ -1,7 +1,9 @@
 from __future__ import unicode_literals
 
+import datetime
 import uuid
 
+import dateutil.parser
 from django.db import models
 from django_unixdatetimefield import UnixDateTimeField
 
@@ -13,7 +15,14 @@ class CommuteTime(models.Model):
     commute_time_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     hour = models.IntegerField()
     minute = models.IntegerField()
-    created = UnixDateTimeField(null=True, blank=True)
+    created = UnixDateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.created:
+            self.created = datetime.datetime.now()
+        else:
+            self.created = dateutil.parser.parse(self.created)
+        super(CommuteTime, self).save()
 
 
 class CommuteInfo(models.Model):
@@ -38,5 +47,12 @@ class CommuteInfo(models.Model):
         null=True,
         blank=True
     )
-    created = UnixDateTimeField(null=True, blank=True)
+    created = UnixDateTimeField()
     modified = UnixDateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not self.created:
+            self.created = datetime.datetime.now()
+        else:
+            self.created = dateutil.parser.parse(self.created)
+        super(CommuteInfo, self).save()
