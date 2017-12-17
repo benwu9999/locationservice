@@ -1,0 +1,7 @@
+*.pyc
+LocationService/lib/*
+LocationService/static/*
+LocationService/location_app/migrations/*
+LocationService/commute_app/migrations/*
+LocationServiceApi/dist
+LocationServiceApi/location_service_api.egg-info

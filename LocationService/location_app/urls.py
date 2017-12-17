@@ -24,7 +24,9 @@ urlpatterns = [
     # unprotected views
     url(r'^location/ids', views.LocationSearchByIds.as_view()),
 
-    url(r'^location/search', views.LocationSearch.as_view()),
+    url(r'^location/byText?.*', views.LocationByText.as_view()),
+
+    url(r'^location/search?.*', views.LocationSearch.as_view()),
     url(r'^location/(?P<pk>.+)$', views.LocationDetail.as_view()),
 
 

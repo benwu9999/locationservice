@@ -29,10 +29,8 @@ class CommuteInfo(models.Model):
     class Meta:
         db_table = 'commute_info'
 
-    commute_info_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    seeker_location_id = models.CharField(max_length=200, null=True)
-    job_location_id = models.CharField(max_length=200, null=True)
-    distance = models.IntegerField()  # number of miles
+    commute_info_id = models.CharField(primary_key=True, max_length=200, null=False)
+    distance = models.FloatField()  # number of miles
     transit_time = models.ForeignKey(
         CommuteTime,
         on_delete=models.SET_NULL,
@@ -51,6 +49,8 @@ class CommuteInfo(models.Model):
     modified = UnixDateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
+        self.transit_time.save()
+        self.drive_time.save()
         if not self.created:
             self.created = datetime.datetime.now()
         else:

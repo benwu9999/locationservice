@@ -1,0 +1,1 @@
+cursors.py 187 - see what sql is executed by DRF

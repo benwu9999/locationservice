@@ -30,3 +30,6 @@ class Location(models.Model):
         else:
             self.created = dateutil.parser.parse(self.created)
         super(Location, self).save()
+
+    def to_address(self):
+        return self.street_address + ", " + self.city + ", " + self.state + ", " + str(self.zip_code);

@@ -1,5 +1,0 @@
-*.pyc
-lib/*
-static/*
-location_app/migrations/*
-commute_app/migrations/*
