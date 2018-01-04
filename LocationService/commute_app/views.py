@@ -10,9 +10,18 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from location_app.models import Location
-from models import CommuteInfo, CommuteTime
+from models import CommuteInfo
 from serializers import CommuteInfoSerializer
 
+
+def remove_dash(data):
+    new_d = dict()
+    for k in data.keys():
+        l = data[k]
+        if '-' in k:
+            k = k.replace('-', '')
+        new_d[k] = [x.replace('-', '') if '-' in x else x for x in l]
+    return new_d
 
 class CommuteInfoList(generics.ListCreateAPIView):
     queryset = CommuteInfo.objects.all()
@@ -33,20 +42,18 @@ class CommuteInfoBulkSave(APIView):
         now = datetime.datetime.now()
         commute_infos = []
         for d in dicts:
-            drive_time_dict = d.pop('drive_time')
-            drive_time, created = CommuteTime.objects.get_or_create(**drive_time_dict)
+            drive_time = d.pop('drive_time')
             # if created:
             #     drive_time_dict['created'] = now
             d['drive_time'] = drive_time
 
-            transit_time_dict = d.pop('transit_time')
-            transit_time, created = CommuteTime.objects.get_or_create(**transit_time_dict)
+            transit_time = d.pop('transit_time')
             # if created:
             #     transit_time_dict['created'] = now
             d['transit_time'] = transit_time
 
-            seeker_location_id = d.pop('seeker_location')['location_id']
-            job_location_id = d.pop('job_location')['location_id']
+            seeker_location_id = d.pop('seeker_location')['location_id'].replace('-', '')
+            job_location_id = d.pop('job_location')['location_id'].replace('-', '')
             commute_info_id = commute_service_utils.get_commute_info_id(seeker_location_id, job_location_id)
             d['commute_info_id'] = commute_info_id
 
@@ -61,15 +68,18 @@ class CommuteInfoBulkSave(APIView):
 class CommuteInfoBulkGet(APIView):
     def post(self, request, format=None):
         data = request.data
-        seeker_location_id = data['seeker_location']['location_id']
-        job_location_ids = data['job_location_ids']
+        seeker_location_id = data['seeker_location']['location_id'].replace('-', '')
+        job_location_ids = [x.replace('-', '') for x in data['job_location_ids']]
         commute_ids = list()
         for job_location_id in job_location_ids:
             commute_id = commute_service_utils.get_commute_info_id(seeker_location_id, job_location_id)
             commute_ids.append(commute_id)
         commute_infos = CommuteInfo.objects.filter(pk__in=commute_ids)
         z = CommuteInfoSerializer(commute_infos, many=True)
-        return Response(z.data)
+        id_to_commute_dict = dict()
+        for c in z.data:
+            id_to_commute_dict[c['commute_info_id']] = c
+        return Response(id_to_commute_dict)
 
 
 GOOGLE_API_KEY = 'AIzaSyA-5_FBn-VYB_I9oz39aOcMIpqfZU__o9I'
@@ -84,7 +94,7 @@ class CommuteInfoBulkGetPair(GenericAPIView):
             data = request.data
             id_to_commute_dict = dict()
             if data:
-                data = CommuteInfoBulkGetPair._remove_dash(data)
+                data = remove_dash(data)
                 commute_ids = list()
                 for k, destinations in data.iteritems():
                     for dest in destinations:
@@ -122,7 +132,6 @@ class CommuteInfoBulkGetPair(GenericAPIView):
         for location in locations:
             location_id_to_location_dict[location.location_id.hex] = location
 
-        origins = list()
         import googlemaps
         gmaps = googlemaps.Client(key=GOOGLE_API_KEY)
 
@@ -157,17 +166,5 @@ class CommuteInfoBulkGetPair(GenericAPIView):
 
 
     @staticmethod
-    def _remove_dash(data):
-        new_d = dict()
-        for k in data.keys():
-            l = data[k]
-            if '-' in k:
-                k = k.replace('-', '')
-            new_d[k] = [x.replace('-', '') if '-' in x else x for x in l]
-        return new_d
-
-    @staticmethod
     def _get_commute_time(seconds):
-        hour = math.floor(seconds / 3600)
-        minute = math.floor((seconds % 3600) / 60)
-        return CommuteTime(hour=hour, minute=minute)
+        hour = math.floor(seconds / 60)
