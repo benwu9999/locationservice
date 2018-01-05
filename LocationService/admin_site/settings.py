@@ -69,8 +69,11 @@ CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 
 CORS_ALLOW_CREDENTIALS = True
 
+# cannot specify port 80, other port can be specified i.e. localhost:4200
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:4200'
+    'localhost',
+    '172.17.0.2', # local docker ip on machine molly
+    '107.178.244.0' # static GAE ip
 )
 
 REST_FRAMEWORK = {
@@ -137,6 +140,22 @@ else:
             'NAME': 'location',
             'USER': 'oneseek',
             'PASSWORD': 'jobpost8531162',
+        },
+        'prod': {
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': '35.185.70.133',
+            'PORT': '3306',
+            'NAME': 'job_post',
+            'USER': 'oneseek',
+            'PASSWORD': 'jobpost8531162',
+            'OPTIONS': {
+                'ssl': {
+                    # replace the paths here with your files
+                    'key': '/home/beanryu/Downloads/client-key.pem',
+                    'cert': '/home/beanryu/Downloads/client-cert.pem',
+                    'ca': '/home/beanryu/Downloads/server-ca.pem',
+                }
+            }
         }
     }
 
